@@ -1,0 +1,23 @@
+<launch>
+    
+    <arg name="record_sensors" default="false" />
+
+    <node pkg="rosbag" type="record" name="rosbag_record_sensors"
+          args="record -o /tmp/prsg2-base-sensors /odom /cmd_vel"
+	  if="$(arg record_sensors)" />
+
+  <!-- We resume the logic in empty_world.launch, changing only the name of the world to be launched -->
+  <include file="$(find gazebo_ros)/launch/empty_world.launch">
+    <arg name="world_name" value="$(find prsg2_gazebo)/worlds/prsg2.world"/>
+    <!-- more default parameters can be changed here -->
+  </include>
+
+  <node pkg="teleop_twist_keyboard" type="teleop_twist_keyboard.py" name="teleop" output="screen"/>   
+
+  <param name="quadrille_angle_fac" type="double" value="1.0" />       
+  <node pkg="quadrille" type="quadrille.py" name="quadrille">
+  <!-- <param name="quadrille_angle_fac" type="double" value="1.0" /> -->
+  <!-- <remap from="cmd_vel" to="robot0/cmd_vel" /> -->
+  </node>
+
+</launch>
